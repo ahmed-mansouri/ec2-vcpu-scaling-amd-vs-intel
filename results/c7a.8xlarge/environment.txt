@@ -1,0 +1,29 @@
+=== EC2 identity ===
+Instance type: c7a.8xlarge
+AMI ID: ami-0d27e0fb3bac4d724
+Availability Zone: us-east-1c
+
+=== Operating system ===
+NAME="Amazon Linux"
+VERSION="2023"
+ID="amzn"
+ID_LIKE="fedora"
+VERSION_ID="2023"
+PLATFORM_ID="platform:al2023"
+PRETTY_NAME="Amazon Linux 2023.12.20260930"
+ANSI_COLOR="0;33"
+CPE_NAME="cpe:2.3:o:amazon:amazon_linux:2023"
+HOME_URL="https://aws.amazon.com/linux/amazon-linux-2023/"
+DOCUMENTATION_URL="https://docs.aws.amazon.com/linux/"
+SUPPORT_URL="https://aws.amazon.com/premiumsupport/"
+BUG_REPORT_URL="https://github.com/amazonlinux/amazon-linux-2023"
+VENDOR_NAME="AWS"
+VENDOR_URL="https://aws.amazon.com/"
+SUPPORT_END="2029-06-30"
+
+=== Kernel ===
+Linux amd-vm 6.18.51-120.163.amzn2023.x86_64 #2 SMP PREEMPT_DYNAMIC Fri Sep 25 01:45:40 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+=== Packages ===
+openssl-3.5.8-1.amzn2023.0.1.x86_64
+package kernel-core is not installed

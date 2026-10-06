@@ -1,0 +1,88 @@
+nohup: ignoring input
+Instance type: c7i.8xlarge
+Logical CPUs: 32
+Worker counts: 1 2 4 8 16 32
+Duration per repetition: 60 seconds
+Repetitions per worker count: 5
+Output directory: /root/cpu-comparison-c7i.8xlarge-20261006T211608Z
+Latest-results link: /root/cpu-comparison-c7i.8xlarge-latest
+
+Running 10-second warm-up...
+Warm-up complete.
+
+Running c7i.8xlarge: workers=1 repeat=1/5
+1,1,1794782.28
+Running c7i.8xlarge: workers=1 repeat=2/5
+1,2,1794082.95
+Running c7i.8xlarge: workers=1 repeat=3/5
+1,3,1794652.57
+Running c7i.8xlarge: workers=1 repeat=4/5
+1,4,1770618.06
+Running c7i.8xlarge: workers=1 repeat=5/5
+1,5,1743566.98
+Running c7i.8xlarge: workers=2 repeat=1/5
+2,1,3489959.12
+Running c7i.8xlarge: workers=2 repeat=2/5
+2,2,3480600.84
+Running c7i.8xlarge: workers=2 repeat=3/5
+2,3,3566391.57
+Running c7i.8xlarge: workers=2 repeat=4/5
+2,4,3515373.43
+Running c7i.8xlarge: workers=2 repeat=5/5
+2,5,3563579.53
+Running c7i.8xlarge: workers=4 repeat=1/5
+4,1,6970853.78
+Running c7i.8xlarge: workers=4 repeat=2/5
+4,2,7176648.57
+Running c7i.8xlarge: workers=4 repeat=3/5
+4,3,7235859.81
+Running c7i.8xlarge: workers=4 repeat=4/5
+4,4,7230781.85
+Running c7i.8xlarge: workers=4 repeat=5/5
+4,5,7229227.29
+Running c7i.8xlarge: workers=8 repeat=1/5
+8,1,14399883.39
+Running c7i.8xlarge: workers=8 repeat=2/5
+8,2,14346755.54
+Running c7i.8xlarge: workers=8 repeat=3/5
+8,3,14311337.04
+Running c7i.8xlarge: workers=8 repeat=4/5
+8,4,14349589.44
+Running c7i.8xlarge: workers=8 repeat=5/5
+8,5,14308460.40
+Running c7i.8xlarge: workers=16 repeat=1/5
+16,1,26593272.07
+Running c7i.8xlarge: workers=16 repeat=2/5
+16,2,26042679.31
+Running c7i.8xlarge: workers=16 repeat=3/5
+16,3,25189143.07
+Running c7i.8xlarge: workers=16 repeat=4/5
+16,4,25395578.19
+Running c7i.8xlarge: workers=16 repeat=5/5
+16,5,25326140.61
+Running c7i.8xlarge: workers=32 repeat=1/5
+32,1,32612946.19
+Running c7i.8xlarge: workers=32 repeat=2/5
+32,2,33191506.72
+Running c7i.8xlarge: workers=32 repeat=3/5
+32,3,32937736.06
+Running c7i.8xlarge: workers=32 repeat=4/5
+32,4,33155539.50
+Running c7i.8xlarge: workers=32 repeat=5/5
+32,5,32848792.78
+
+=== BENCHMARK COMPLETE ===
+
+workers  avg_aggregate_kBps  avg_per_worker_kBps  scaling_efficiency_pct
+1        1779540.57          1779540.57           100.00
+2        3523180.90          1761590.45           98.99
+4        7168674.26          1792168.56           100.71
+8        14343205.16         1792900.65           100.75
+16       25709362.65         1606835.17           90.29
+32       32949304.25         1029665.76           57.86
+
+System information: /root/cpu-comparison-c7i.8xlarge-20261006T211608Z/system-info.txt
+Raw measurements:   /root/cpu-comparison-c7i.8xlarge-20261006T211608Z/results.csv
+Final summary:      /root/cpu-comparison-c7i.8xlarge-20261006T211608Z/summary.csv
+Individual logs:    /root/cpu-comparison-c7i.8xlarge-20261006T211608Z/raw
+Latest-results link: /root/cpu-comparison-c7i.8xlarge-latest
