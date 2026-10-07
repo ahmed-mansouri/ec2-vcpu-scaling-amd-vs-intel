@@ -53,6 +53,7 @@ Picture a small factory with one job: take a 16 KiB (16 x 1024 = 16,384 bytes) b
 
 **Throughput** in this article is that production rate: **bytes hashed per second**. A lone worker on either machine manages about 1.8 GB/s (1,805,103 kB/s measured on AMD, 1,779,541 kB/s on Intel, see section 6). OpenSSL reports bytes, not hashes, but since every hash consumes exactly one 16,384-byte block the two are interchangeable:
 
+
 ```text
 hashes per second = bytes per second / bytes per hash
                   = 1,805,103,000 / 16,384
@@ -61,6 +62,7 @@ hashes per second = bytes per second / bytes per hash
                   = 1,779,541,000 / 16,384
                   = 108,615            (Intel, one worker alone)
 ```
+
 
 So one worker completes roughly 110,000 hashes of 16 KiB every second.
 
