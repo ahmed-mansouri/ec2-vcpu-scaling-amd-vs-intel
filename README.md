@@ -467,7 +467,7 @@ Linux intel-vm 6.18.51-120.163.amzn2023.x86_64 #2 SMP PREEMPT_DYNAMIC Fri Sep 25
 openssl-3.5.8-1.amzn2023.0.1.x86_64
 ```
 
-The AMD output was identical apart from the instance type and host name. Copy everything off the instance (`aws s3 cp --recursive`, or just `cat` the files through the terminal as was done here) and store it alongside the article. All of it is under [`results/`](results/).
+The AMD output was identical apart from the instance type and host name. Copy everything off the instances before terminating them (`aws s3 cp --recursive`, or just `cat` the files through the terminal as was done here) and keep it with your write-up, so every number you quote can be traced back to a raw file. For this run, all of it is in this repository under [`results/`](results/).
 
 ## 6. Results
 
