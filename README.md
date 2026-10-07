@@ -51,7 +51,7 @@ Picture a small factory with one job: take a 16 KiB (16 x 1024 = 16,384 bytes) b
 
 ![One worker: one openssl process on one vCPU hashing one cached block](images/diagram-one-worker.svg)
 
-**Throughput** in this article is that production rate: **bytes hashed per second**. A lone worker on either machine manages about 1.8 GB/s, so one worker completes roughly 110,000 hashes of 16 KiB every second.
+**Throughput** in this article is that production rate: **bytes hashed per second**. A lone worker on either machine manages about 1.8 GB/s (1,805,103 kB/s measured on AMD, 1,779,541 kB/s on Intel, see section 6). Since every hash consumes exactly one 16,384-byte block, that is 1,805,103,000 / 16,384 = roughly 110,000 hashes of 16 KiB every second from one worker.
 
 The experiment then opens more factories. With N workers running at the same time on N different vCPUs, the **aggregate throughput** is simply the sum of what the N workers each reported: the number of bytes the whole instance hashed per second. The question is whether opening the 17th to 32nd factory adds as much output as opening the 1st to 16th did. On a machine with 32 real cores it should; on a machine where vCPUs 16 to 31 share cores with vCPUs 0 to 15, each new factory has to share its machines with an existing one.
 

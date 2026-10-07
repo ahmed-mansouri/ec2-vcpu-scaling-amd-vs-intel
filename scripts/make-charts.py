@@ -562,7 +562,7 @@ def fig_timeline(data):
 
 def fig_worker(data):
     """What one worker is: one openssl process on one vCPU, hashing one cached block in a loop."""
-    W, H = 1200, 600
+    W, H = 1200, 612
     svg = SVG(W, H, scale=1.0)
     blue, dark, red, amber = "#1F6FB2", "#1a1a1a", "#C0392B", "#8a5a00"
     svg.text(W / 2, 34, "One worker = one 'factory'", 24, weight="bold", fill=dark)
@@ -570,21 +570,22 @@ def fig_worker(data):
              15, fill=dark)
 
     # the vCPU box
-    bx, by, bw, bh = 300, 100, 600, 360
+    bx, by, bw, bh = 300, 100, 600, 372
     svg.rect(bx, by, bw, bh, "#e8f1fa", blue, 3, rx=14)
     svg.text(bx + bw / 2, by + 32, "vCPU N   (pinned with  taskset -c N)", 17, weight="bold", fill=blue)
 
     # L1 cache with the block
-    cx, cy, cw, ch = bx + 28, by + 62, 215, 150
+    cx, cy, cw, ch = bx + 28, by + 62, 215, 164
     svg.rect(cx, cy, cw, ch, "#ffffff", dark, 2, rx=8)
     svg.text(cx + cw / 2, cy + 26, "L1 cache of this core", 15, weight="bold", fill=dark)
-    svg.rect(cx + 22, cy + 44, cw - 44, 62, "#bcd4ec", blue, 2, rx=6)
-    svg.text(cx + cw / 2, cy + 70, "16 KiB block", 16, weight="bold", fill=dark)
-    svg.text(cx + cw / 2, cy + 92, "same bytes each time", 12, fill=dark)
-    svg.text(cx + cw / 2, cy + ch - 14, "read ~110,000 times per second", 12, fill=dark)
+    svg.rect(cx + 22, cy + 42, cw - 44, 62, "#bcd4ec", blue, 2, rx=6)
+    svg.text(cx + cw / 2, cy + 68, "16 KiB block", 16, weight="bold", fill=dark)
+    svg.text(cx + cw / 2, cy + 90, "= 16,384 bytes, same each time", 11, fill=dark)
+    svg.text(cx + cw / 2, cy + ch - 30, "hashed ~110,000 times per second", 11.5, fill=dark)
+    svg.text(cx + cw / 2, cy + ch - 12, "(1.8 GB/s / 16,384 bytes)", 11, fill=dark)
 
     # SHA unit
-    sx, sy, sw, sh = bx + bw - 28 - 215, cy, 215, 150
+    sx, sy, sw, sh = bx + bw - 28 - 215, cy, 215, 164
     svg.rect(sx, sy, sw, sh, "#ffffff", dark, 2, rx=8)
     svg.text(sx + sw / 2, sy + 26, "execution unit of this core", 15, weight="bold", fill=dark)
     svg.rect(sx + 22, sy + 44, sw - 44, 62, "#f6c7bf", red, 2, rx=6)
@@ -603,7 +604,7 @@ def fig_worker(data):
     svg.text(mid, cy + 86, "tight loop", 13, fill=dark)
 
     # timer + counter
-    ty = by + 240
+    ty = by + 252
     svg.rect(bx + 28, ty, 262, 78, "#ffffff", dark, 2, rx=8)
     svg.text(bx + 159, ty + 30, "timer: 60 seconds", 16, weight="bold", fill=dark)
     svg.text(bx + 159, ty + 56, "wall-clock time  (-elapsed)", 12.5, fill=dark)
