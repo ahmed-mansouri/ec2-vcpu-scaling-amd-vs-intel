@@ -1,51 +1,52 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='300' viewBox='0 0 1000 300' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
-<rect width='1000' height='300' fill='#ffffff'/>
-<text x='500.0' y='30.0' font-size='17' text-anchor='middle' font-weight='bold' fill='#222'>Test procedure (identical on both instances, run at the same time)</text>
-<rect x='25.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='95.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1. Launch</text>
-<text x='95.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>c7i.8xlarge and</text>
-<text x='95.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>c7a.8xlarge</text>
-<text x='95.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>same AMI, same AZ</text>
-<line x1='167.0' y1='145.0' x2='185.0' y2='145.0' stroke='#444' stroke-width='1.8'/>
-<line x1='185.0' y1='145.0' x2='177.3' y2='149.6' stroke='#444' stroke-width='1.8'/>
-<line x1='185.0' y1='145.0' x2='177.3' y2='140.4' stroke='#444' stroke-width='1.8'/>
-<rect x='187.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='257.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>2. Verify</text>
-<text x='257.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>IMDSv2 instance-type</text>
-<text x='257.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>lscpu topology</text>
-<text x='257.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>openssl version</text>
-<line x1='329.0' y1='145.0' x2='347.0' y2='145.0' stroke='#444' stroke-width='1.8'/>
-<line x1='347.0' y1='145.0' x2='339.3' y2='149.6' stroke='#444' stroke-width='1.8'/>
-<line x1='347.0' y1='145.0' x2='339.3' y2='140.4' stroke='#444' stroke-width='1.8'/>
-<rect x='349.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='419.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>3. Warm-up</text>
-<text x='419.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>10 s openssl speed</text>
-<text x='419.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>on one vCPU</text>
-<text x='419.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>(discarded)</text>
-<line x1='491.0' y1='145.0' x2='509.0' y2='145.0' stroke='#444' stroke-width='1.8'/>
-<line x1='509.0' y1='145.0' x2='501.3' y2='149.6' stroke='#444' stroke-width='1.8'/>
-<line x1='509.0' y1='145.0' x2='501.3' y2='140.4' stroke='#444' stroke-width='1.8'/>
-<rect x='511.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='581.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>4. Sweep</text>
-<text x='581.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>N = 1,2,4,8,16,32</text>
-<text x='581.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>5 repetitions each</text>
-<text x='581.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>60 s per repetition</text>
-<line x1='653.0' y1='145.0' x2='671.0' y2='145.0' stroke='#444' stroke-width='1.8'/>
-<line x1='671.0' y1='145.0' x2='663.3' y2='149.6' stroke='#444' stroke-width='1.8'/>
-<line x1='671.0' y1='145.0' x2='663.3' y2='140.4' stroke='#444' stroke-width='1.8'/>
-<rect x='673.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='743.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>5. Measure</text>
-<text x='743.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>sum of per-worker</text>
-<text x='743.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>kB/s -&gt; results.csv</text>
-<text x='743.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>(one row per rep)</text>
-<line x1='815.0' y1='145.0' x2='833.0' y2='145.0' stroke='#444' stroke-width='1.8'/>
-<line x1='833.0' y1='145.0' x2='825.3' y2='149.6' stroke='#444' stroke-width='1.8'/>
-<line x1='833.0' y1='145.0' x2='825.3' y2='140.4' stroke='#444' stroke-width='1.8'/>
-<rect x='835.0' y='70.0' width='140.0' height='150.0' fill='#f3f7fb' stroke='#1F6FB2' stroke-width='1.4' rx='8' fill-opacity='1.0'/>
-<text x='905.0' y='96.0' font-size='14' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>6. Summarise</text>
-<text x='905.0' y='128.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>mean, per-worker,</text>
-<text x='905.0' y='148.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>efficiency vs own</text>
-<text x='905.0' y='168.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#222'>1-worker baseline</text>
-<text x='500.0' y='255.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#333'>Every worker is 'taskset -c &lt;vCPU&gt; openssl speed -seconds 60 -elapsed -bytes 16384 sha256', started in the background; the script waits for all of them before reading the logs.</text>
-<text x='500.0' y='277.0' font-size='12' text-anchor='middle' font-weight='normal' fill='#333'>Total wall time per instance: 6 worker counts x 5 repetitions x 60 s = 30 minutes (+ warm-up).</text>
+<svg xmlns='http://www.w3.org/2000/svg' width='1240' height='340' viewBox='0 0 1240 340' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
+<rect width='1240' height='340' fill='#ffffff'/>
+<text x='620.0' y='30.0' font-size='22.1' text-anchor='middle' font-weight='bold' fill='#1a1a1a'>Test procedure (identical on both instances, run at the same time)</text>
+<rect x='20.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='110.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1. Launch</text>
+<text x='110.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>c7i.8xlarge and</text>
+<text x='110.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>c7a.8xlarge</text>
+<text x='110.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>same AMI, same AZ</text>
+<line x1='202.0' y1='150.0' x2='222.0' y2='150.0' stroke='#444' stroke-width='2.70'/>
+<line x1='222.0' y1='150.0' x2='214.3' y2='154.6' stroke='#444' stroke-width='2.70'/>
+<line x1='222.0' y1='150.0' x2='214.3' y2='145.4' stroke='#444' stroke-width='2.70'/>
+<rect x='224.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='314.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>2. Verify</text>
+<text x='314.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>IMDSv2 instance-type</text>
+<text x='314.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>lscpu topology</text>
+<text x='314.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>openssl version</text>
+<line x1='406.0' y1='150.0' x2='426.0' y2='150.0' stroke='#444' stroke-width='2.70'/>
+<line x1='426.0' y1='150.0' x2='418.3' y2='154.6' stroke='#444' stroke-width='2.70'/>
+<line x1='426.0' y1='150.0' x2='418.3' y2='145.4' stroke='#444' stroke-width='2.70'/>
+<rect x='428.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='518.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>3. Warm-up</text>
+<text x='518.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>10 s openssl speed</text>
+<text x='518.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>on one vCPU</text>
+<text x='518.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>(discarded)</text>
+<line x1='610.0' y1='150.0' x2='630.0' y2='150.0' stroke='#444' stroke-width='2.70'/>
+<line x1='630.0' y1='150.0' x2='622.3' y2='154.6' stroke='#444' stroke-width='2.70'/>
+<line x1='630.0' y1='150.0' x2='622.3' y2='145.4' stroke='#444' stroke-width='2.70'/>
+<rect x='632.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='722.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>4. Sweep</text>
+<text x='722.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>N = 1,2,4,8,16,32</text>
+<text x='722.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>5 repetitions each</text>
+<text x='722.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>60 s per repetition</text>
+<line x1='814.0' y1='150.0' x2='834.0' y2='150.0' stroke='#444' stroke-width='2.70'/>
+<line x1='834.0' y1='150.0' x2='826.3' y2='154.6' stroke='#444' stroke-width='2.70'/>
+<line x1='834.0' y1='150.0' x2='826.3' y2='145.4' stroke='#444' stroke-width='2.70'/>
+<rect x='836.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='926.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>5. Measure</text>
+<text x='926.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>sum of per-worker</text>
+<text x='926.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>kB/s -&gt; results.csv</text>
+<text x='926.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>(one row per rep)</text>
+<line x1='1018.0' y1='150.0' x2='1038.0' y2='150.0' stroke='#444' stroke-width='2.70'/>
+<line x1='1038.0' y1='150.0' x2='1030.3' y2='154.6' stroke='#444' stroke-width='2.70'/>
+<line x1='1038.0' y1='150.0' x2='1030.3' y2='145.4' stroke='#444' stroke-width='2.70'/>
+<rect x='1040.0' y='70.0' width='180.0' height='160.0' fill='#e4eef8' stroke='#1F6FB2' stroke-width='2.10' rx='8' fill-opacity='1.0'/>
+<text x='1130.0' y='96.0' font-size='18.2' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>6. Summarise</text>
+<text x='1130.0' y='132.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>mean, per-worker,</text>
+<text x='1130.0' y='156.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>efficiency vs own</text>
+<text x='1130.0' y='180.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>1-worker baseline</text>
+<text x='620.0' y='266.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>Every worker is  taskset -c &lt;vCPU&gt; openssl speed -seconds 60 -elapsed -bytes 16384 sha256</text>
+<text x='620.0' y='290.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>started in the background; the script waits for all of them before reading the logs.</text>
+<text x='620.0' y='318.0' font-size='15.6' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>Total wall time per instance: 6 worker counts x 5 repetitions x 60 s = 30 minutes (+ warm-up).</text>
 </svg>

@@ -74,9 +74,20 @@ def load(instance: str) -> dict:
 # --------------------------------------------------------------------------
 # SVG helpers
 # --------------------------------------------------------------------------
+TEXT_SCALE = 1.3      # all figures use larger type than the first draft
+STROKE_SCALE = 1.5
+DARK = "#1a1a1a"
+# muted greys used in the first draft -> readable dark text / stronger lines
+TEXT_COLOUR_MAP = {"#222": DARK, "#333": DARK, "#444": DARK, "#555": DARK, "#777": "#444"}
+STROKE_COLOUR_MAP = {"#e3e3e3": "#cfcfcf", "#999": "#555", "#aaa": "#777", "#bbb": "#888", "#ccc": "#888"}
+FILL_COLOUR_MAP = {"#fafafa": "#f4f4f4", "#eeeeee": "#dcdcdc", "#e9e9e9": "#d9d9d9", "#f3f7fb": "#e4eef8"}
+
+
 class SVG:
-    def __init__(self, w: int, h: int):
+    def __init__(self, w: int, h: int, scale: float = TEXT_SCALE):
         self.w, self.h = w, h
+        self.scale = scale
+        self.stroke_scale = STROKE_SCALE if scale != 1.0 else 1.0
         self.parts = [
             f"<svg xmlns='http://www.w3.org/2000/svg' width='{w}' height='{h}' "
             f"viewBox='0 0 {w} {h}' {FONT}>",
@@ -90,6 +101,9 @@ class SVG:
              fill="#222", rotate=None, family=None):
         s = (str(s).replace("&", "&amp;").replace("<", "&lt;")
              .replace(">", "&gt;"))
+        size = round(size * self.scale, 1)
+        if self.scale != 1.0:
+            fill = TEXT_COLOUR_MAP.get(fill, fill)
         tr = f" transform='rotate({rotate} {x} {y})'" if rotate else ""
         fam = f" font-family='{family}'" if family else ""
         self.add(f"<text x='{x:.1f}' y='{y:.1f}' font-size='{size}' "
@@ -98,24 +112,34 @@ class SVG:
 
     def line(self, x1, y1, x2, y2, stroke="#333", width=1, dash=None):
         d = f" stroke-dasharray='{dash}'" if dash else ""
+        if self.scale != 1.0:
+            stroke = STROKE_COLOUR_MAP.get(stroke, stroke)
+            width = width * self.stroke_scale
         self.add(f"<line x1='{x1:.1f}' y1='{y1:.1f}' x2='{x2:.1f}' y2='{y2:.1f}' "
-                 f"stroke='{stroke}' stroke-width='{width}'{d}/>")
+                 f"stroke='{stroke}' stroke-width='{width:.2f}'{d}/>")
 
     def rect(self, x, y, w, h, fill="#eee", stroke="#333", width=1, rx=0,
              opacity=1.0):
+        if self.scale != 1.0:
+            fill = FILL_COLOUR_MAP.get(fill, fill)
+            stroke = STROKE_COLOUR_MAP.get(stroke, stroke)
+            if stroke != "none":
+                width = width * self.stroke_scale
         self.add(f"<rect x='{x:.1f}' y='{y:.1f}' width='{w:.1f}' height='{h:.1f}' "
-                 f"fill='{fill}' stroke='{stroke}' stroke-width='{width}' "
+                 f"fill='{fill}' stroke='{stroke}' stroke-width='{width:.2f}' "
                  f"rx='{rx}' fill-opacity='{opacity}'/>")
 
     def circle(self, x, y, r, fill):
-        self.add(f"<circle cx='{x:.1f}' cy='{y:.1f}' r='{r}' fill='{fill}' "
+        r = r * (1.2 if self.scale != 1.0 else 1.0)
+        self.add(f"<circle cx='{x:.1f}' cy='{y:.1f}' r='{r:.1f}' fill='{fill}' "
                  f"stroke='#fff' stroke-width='1.5'/>")
 
     def polyline(self, pts, stroke, width=2.5, dash=None):
         d = f" stroke-dasharray='{dash}'" if dash else ""
         p = " ".join(f"{x:.1f},{y:.1f}" for x, y in pts)
+        width = width * (1.25 if self.scale != 1.0 else 1.0)
         self.add(f"<polyline points='{p}' fill='none' stroke='{stroke}' "
-                 f"stroke-width='{width}' stroke-linejoin='round'{d}/>")
+                 f"stroke-width='{width:.2f}' stroke-linejoin='round'{d}/>")
 
     def arrow(self, x1, y1, x2, y2, stroke="#444"):
         self.line(x1, y1, x2, y2, stroke, 1.8)
@@ -142,8 +166,8 @@ def fmt_num(v: float) -> str:
 def line_chart(name, title, ylabel, series, ymax, ytick, value_fmt,
                ref_lines=(), whiskers=None, subtitle=None, label_offsets=None,
                legend_bottom=False):
-    W, H = 960, 560
-    L, R, T, B = 95, 40, 80, 90
+    W, H = 1100, 600
+    L, R, T, B = 105, 40, 100, 95
     svg = SVG(W, H)
     pw, ph = W - L - R, H - T - B
 
@@ -155,7 +179,8 @@ def line_chart(name, title, ylabel, series, ymax, ytick, value_fmt,
 
     svg.text(W / 2, 34, title, 20, weight="bold")
     if subtitle:
-        svg.text(W / 2, 58, subtitle, 13, fill="#555")
+        for i, part in enumerate(subtitle.split("|")):
+            svg.text(W / 2, 58 + i * 20, part.strip(), 12.5, fill="#555")
 
     # grid and axes
     v = 0.0
@@ -234,12 +259,13 @@ def fig_aggregate(data):
         "Aggregate throughput (GB/s, decimal, sum of all workers)",
         series, 64, 8, lambda v: f"{v:.0f}",
         whiskers=whisk,
-        subtitle="Mean of 5 x 60-second repetitions; whiskers show min and max repetition. "
+        subtitle="Mean of 5 x 60-second repetitions; whiskers show min and max repetition. | "
                  "Dashed lines = N x each instance's own single-worker mean.",
         label_offsets={("c7i.8xlarge", 32): (0, 22), ("c7i.8xlarge", 16): (0, 22),
                        ("c7i.8xlarge", 8): (0, 22), ("c7i.8xlarge", 4): (0, 22),
-                       ("c7i.8xlarge", 2): (0, 22), ("c7i.8xlarge", 1): (-34, 4),
-                       ("c7a.8xlarge", 1): (0, -12)},
+                       ("c7i.8xlarge", 2): (0, 22), ("c7i.8xlarge", 1): (0, 26),
+                       ("c7a.8xlarge", 1): (0, -14), ("c7a.8xlarge", 16): (-40, -2),
+                       ("c7a.8xlarge", 32): (-44, 6)},
     )
 
 
@@ -259,6 +285,7 @@ def fig_per_worker(data):
         series, 2000, 250, lambda v: f"{v:,.0f}",
         subtitle="aggregate / N. A flat line means every added worker got a full core's worth of work done.",
         label_offsets={("c7i.8xlarge", w): (0, 22) for w in WORKERS},
+        legend_bottom=True,
     )
 
 
@@ -279,7 +306,7 @@ def fig_efficiency(data):
         series, 120, 20, lambda v: f"{v:.0f}%",
         ref_lines=[("100% = perfect linear scaling", 100, "#2e7d32")],
         whiskers=whisk,
-        subtitle="efficiency = aggregate(N) / (N x mean single-worker throughput) x 100, "
+        subtitle="efficiency = aggregate(N) / (N x mean single-worker throughput) x 100, | "
                  "each instance against its own baseline",
         label_offsets={("c7i.8xlarge", w): (0, 24) for w in WORKERS},
         legend_bottom=True,
@@ -329,58 +356,62 @@ def fig_16_vs_32(data):
 
 def fig_topology():
     """Side-by-side picture of what the guest sees on each instance."""
-    W, H = 1000, 470
+    W, H = 1240, 540
     svg = SVG(W, H)
-    svg.text(W / 2, 32, "What lscpu exposes: 32 vCPUs on both, but a different number of physical cores",
+    svg.text(W / 2, 34, "What lscpu exposes: 32 vCPUs on both, but a different number of physical cores",
              18, weight="bold")
 
-    def panel(x0, title, colour, cores, tpc, l3_text):
-        svg.text(x0 + 225, 68, title, 15, weight="bold", fill=colour)
-        svg.rect(x0, 80, 450, 320, "#fafafa", "#999", 1.2, rx=10)
+    def panel(x0, title, sub, colour, cores, tpc, l3_text, l2_text):
+        pw = 580
+        svg.text(x0 + pw / 2, 72, title, 15, weight="bold", fill=colour)
+        svg.text(x0 + pw / 2, 92, sub, 11.5, fill="#333")
+        svg.rect(x0, 104, pw, 356, "#fafafa", "#999", 1.2, rx=10)
         cols = 8
         rows = cores // cols
-        cw, ch = 50, 250 / rows
+        cw, ch = 64, 250 / rows
         for c in range(cores):
-            cx = x0 + 15 + (c % cols) * (cw + 4)
-            cy = 95 + (c // cols) * (ch + 4)
+            cx = x0 + 18 + (c % cols) * (cw + 5)
+            cy = 118 + (c // cols) * (ch + 5)
             svg.rect(cx, cy, cw, ch, "#ffffff", colour, 1.4, rx=4)
-            svg.text(cx + cw / 2, cy + 12, f"core {c}", 9, fill="#555")
+            svg.text(cx + cw / 2, cy + 13, f"core {c}", 8.5, fill="#555")
             if tpc == 2:
-                svg.rect(cx + 4, cy + 17, cw - 8, (ch - 24) / 2 - 1, colour, "none", opacity=0.75, rx=2)
-                svg.rect(cx + 4, cy + 17 + (ch - 24) / 2 + 1, cw - 8, (ch - 24) / 2 - 1, colour, "none", opacity=0.35, rx=2)
-                svg.text(cx + cw / 2, cy + 17 + (ch - 24) / 4 + 4, f"vCPU {c}", 9, fill="#fff", weight="bold")
-                svg.text(cx + cw / 2, cy + 17 + 3 * (ch - 24) / 4 + 5, f"vCPU {c + 16}", 9, fill="#222", weight="bold")
+                h2 = (ch - 24) / 2 - 1
+                svg.rect(cx + 4, cy + 18, cw - 8, h2, colour, "none", opacity=0.85, rx=2)
+                svg.rect(cx + 4, cy + 18 + h2 + 2, cw - 8, h2, colour, "none", opacity=0.35, rx=2)
+                svg.text(cx + cw / 2, cy + 18 + h2 / 2 + 4, f"vCPU {c}", 8.5, fill="#fff", weight="bold")
+                svg.text(cx + cw / 2, cy + 18 + h2 + 2 + h2 / 2 + 4, f"vCPU {c + 16}", 8.5, fill="#222", weight="bold")
             else:
-                svg.rect(cx + 4, cy + 17, cw - 8, ch - 24, colour, "none", opacity=0.75, rx=2)
-                svg.text(cx + cw / 2, cy + 17 + (ch - 24) / 2 + 4, f"vCPU {c}", 9, fill="#fff", weight="bold")
-        svg.rect(x0 + 15, 355, 420, 34, "#e8e8e8", "#777", 1, rx=4)
-        svg.text(x0 + 225, 377, l3_text, 12, fill="#333")
+                svg.rect(cx + 4, cy + 18, cw - 8, ch - 24, colour, "none", opacity=0.85, rx=2)
+                svg.text(cx + cw / 2, cy + 18 + (ch - 24) / 2 + 4, f"vCPU {c}", 8.5, fill="#fff", weight="bold")
+        svg.rect(x0 + 18, 388, pw - 36, 58, "#e8e8e8", "#777", 1, rx=4)
+        svg.text(x0 + pw / 2, 410, l3_text, 11.5, fill="#333")
+        svg.text(x0 + pw / 2, 432, l2_text, 11.5, fill="#333")
 
-    panel(40, "Intel c7i.8xlarge: 16 physical cores x 2 SMT threads", INSTANCES[0][2], 16, 2,
-          "L3 cache: 105 MiB (1 instance)   L2: 16 x 2 MiB   1 socket, 1 NUMA node")
-    panel(510, "AMD c7a.8xlarge: 32 physical cores x 1 thread", INSTANCES[1][2], 32, 1,
-          "L3 cache: 128 MiB (4 instances)   L2: 32 x 1 MiB   1 socket, 1 NUMA node")
+    panel(30, "Intel c7i.8xlarge", "16 physical cores x 2 SMT threads = 32 vCPUs", INSTANCES[0][2], 16, 2,
+          "L3 cache: 105 MiB, 1 instance shared by all cores", "L2: 16 x 2 MiB   1 socket, 1 NUMA node")
+    panel(630, "AMD c7a.8xlarge", "32 physical cores x 1 thread = 32 vCPUs", INSTANCES[1][2], 32, 1,
+          "L3 cache: 128 MiB, 4 instances of 32 MiB", "L2: 32 x 1 MiB   1 socket, 1 NUMA node")
 
-    svg.text(W / 2, 425, "Intel: vCPU n and vCPU n+16 are two hardware threads of the SAME core "
-             "(lscpu -e shows CPU 16 -> CORE 0, CPU 17 -> CORE 1, ...).", 12.5, fill="#333")
-    svg.text(W / 2, 447, "AMD: every vCPU is its own core (CPU n -> CORE n). "
-             "Darker = first thread of each core, lighter = SMT sibling.", 12.5, fill="#333")
+    svg.text(W / 2, 486, "Intel: vCPU n and vCPU n+16 are two hardware threads of the SAME core "
+             "(lscpu -e shows CPU 16 -> CORE 0, CPU 17 -> CORE 1, ...).", 12, fill="#333")
+    svg.text(W / 2, 510, "Darker = first thread of each core, lighter = its SMT sibling.   "
+             "AMD: every vCPU is its own core (CPU n -> CORE n).", 12, fill="#333")
     svg.save("diagram-topology.svg")
 
 
 def fig_placement():
     """Which vCPUs carry a worker at 16 and at 32 workers."""
-    W, H = 1000, 560
+    W, H = 1240, 600
     svg = SVG(W, H)
-    svg.text(W / 2, 32, "Worker placement chosen by cpu-scale.sh (one physical core per worker first, SMT siblings last)",
-             17, weight="bold")
+    svg.text(W / 2, 32, "Worker placement chosen by cpu-scale.sh", 18, weight="bold")
+    svg.text(W / 2, 56, "one physical core per worker first, SMT siblings last", 13, fill="#333")
 
     def panel(x0, y0, title, colour, cores, tpc, workers):
-        svg.text(x0 + 225, y0 - 8, title, 13.5, weight="bold", fill=colour)
-        svg.rect(x0, y0, 450, 170, "#fafafa", "#999", 1, rx=8)
+        svg.text(x0 + 285, y0 - 10, title, 13.5, weight="bold", fill=colour)
+        svg.rect(x0, y0, 570, 180, "#fafafa", "#999", 1, rx=8)
         cols = 16
         rows = cores // cols
-        cw, ch = 25, 130 / rows
+        cw, ch = 32, 132 / rows
         busy_vcpus = set(range(workers)) if tpc == 1 else (
             set(range(min(workers, 16))) | set(range(16, 16 + max(0, workers - 16))))
         for c in range(cores):
@@ -397,24 +428,24 @@ def fig_placement():
                 busy = c in busy_vcpus
                 svg.rect(cx + 3, cy + 3, cw - 6, ch - 6, colour if busy else "#eeeeee", "none", rx=2)
         used_cores = min(workers, cores)
-        svg.text(x0 + 225, y0 + 160, f"{workers} workers -> {used_cores} physical cores busy"
+        svg.text(x0 + 285, y0 + 168, f"{workers} workers -> {used_cores} physical cores busy"
                  + (", 2 threads per core" if tpc == 2 and workers > 16 else ", 1 thread per core"),
                  12, fill="#333")
 
-    panel(40, 70, "Intel c7i.8xlarge, 16 workers (vCPU 0-15)", INSTANCES[0][2], 16, 2, 16)
-    panel(510, 70, "AMD c7a.8xlarge, 16 workers (vCPU 0-15)", INSTANCES[1][2], 32, 1, 16)
-    panel(40, 300, "Intel c7i.8xlarge, 32 workers (vCPU 0-31)", INSTANCES[0][2], 16, 2, 32)
-    panel(510, 300, "AMD c7a.8xlarge, 32 workers (vCPU 0-31)", INSTANCES[1][2], 32, 1, 32)
+    panel(40, 96, "Intel c7i.8xlarge, 16 workers (vCPU 0-15)", INSTANCES[0][2], 16, 2, 16)
+    panel(630, 96, "AMD c7a.8xlarge, 16 workers (vCPU 0-15)", INSTANCES[1][2], 32, 1, 16)
+    panel(40, 326, "Intel c7i.8xlarge, 32 workers (vCPU 0-31)", INSTANCES[0][2], 16, 2, 32)
+    panel(630, 326, "AMD c7a.8xlarge, 32 workers (vCPU 0-31)", INSTANCES[1][2], 32, 1, 32)
 
-    svg.text(W / 2, 505, "Coloured cell = a pinned OpenSSL worker is running on that hardware thread. Grey = idle thread.",
+    svg.text(W / 2, 545, "Coloured cell = a pinned OpenSSL worker is running on that hardware thread. Grey = idle thread.",
              12.5, fill="#333")
-    svg.text(W / 2, 527, "Going from 16 to 32 workers, Intel adds a second worker to each already-busy core; "
+    svg.text(W / 2, 570, "Going from 16 to 32 workers, Intel adds a second worker to each already-busy core; "
              "AMD adds 16 untouched cores.", 12.5, fill="#333")
     svg.save("diagram-worker-placement.svg")
 
 
 def fig_flow():
-    W, H = 1000, 300
+    W, H = 1240, 340
     svg = SVG(W, H)
     svg.text(W / 2, 30, "Test procedure (identical on both instances, run at the same time)", 17, weight="bold")
     steps = [
@@ -425,106 +456,105 @@ def fig_flow():
         ("5. Measure", "sum of per-worker\nkB/s -> results.csv\n(one row per rep)"),
         ("6. Summarise", "mean, per-worker,\nefficiency vs own\n1-worker baseline"),
     ]
-    bw, bh, gap = 140, 150, 22
+    bw, bh, gap = 180, 160, 24
     x = (W - (bw * len(steps) + gap * (len(steps) - 1))) / 2
     y = 70
     for i, (title, body) in enumerate(steps):
         svg.rect(x, y, bw, bh, "#f3f7fb", "#1F6FB2", 1.4, rx=8)
         svg.text(x + bw / 2, y + 26, title, 14, weight="bold", fill="#1F6FB2")
         for j, ln in enumerate(body.split("\n")):
-            svg.text(x + bw / 2, y + 58 + j * 20, ln, 12, fill="#222")
+            svg.text(x + bw / 2, y + 62 + j * 24, ln, 12, fill="#222")
         if i < len(steps) - 1:
             svg.arrow(x + bw + 2, y + bh / 2, x + bw + gap - 2, y + bh / 2)
         x += bw + gap
-    svg.text(W / 2, 255, "Every worker is 'taskset -c <vCPU> openssl speed -seconds 60 -elapsed -bytes 16384 sha256', "
-             "started in the background; the script waits for all of them before reading the logs.",
+    svg.text(W / 2, 266, "Every worker is  taskset -c <vCPU> openssl speed -seconds 60 -elapsed -bytes 16384 sha256",
              12, fill="#333")
-    svg.text(W / 2, 277, "Total wall time per instance: 6 worker counts x 5 repetitions x 60 s = 30 minutes (+ warm-up).",
+    svg.text(W / 2, 290, "started in the background; the script waits for all of them before reading the logs.",
+             12, fill="#333")
+    svg.text(W / 2, 318, "Total wall time per instance: 6 worker counts x 5 repetitions x 60 s = 30 minutes (+ warm-up).",
              12, fill="#333")
     svg.save("diagram-test-flow.svg")
 
 
 def fig_timeline(data):
     """When each worker runs, on which vCPU, over the 30-minute sweep."""
-    W, H = 1100, 620
+    W, H = 1300, 720
     svg = SVG(W, H)
-    svg.text(W / 2, 28, "How the 30 repetitions are scheduled on the 32 vCPUs (same on both instances)",
+    svg.text(W / 2, 30, "How the 30 repetitions are scheduled on the 32 vCPUs (same on both instances)",
              17, weight="bold")
 
-    x0, y0 = 92, 78
-    stage_w, rep_gap = 148, 2
-    rep_w = (stage_w - 4 * rep_gap - 6) / 5
-    row_h = 8
+    x0, y0 = 130, 92
+    stage_w, rep_gap = 160, 3
+    rep_w = (stage_w - 4 * rep_gap - 8) / 5
+    row_h = 9
     plot_w = stage_w * len(WORKERS)
     plot_h = row_h * 32
     busy, idle = "#1F6FB2", "#e9e9e9"
 
-    # vCPU grid, one row per vCPU, one column per repetition
     for si, n in enumerate(WORKERS):
         sx = x0 + si * stage_w
-        svg.text(sx + stage_w / 2, y0 - 26, f"{n} worker{'s' if n > 1 else ''}", 12.5, weight="bold", fill="#1F6FB2")
-        svg.text(sx + stage_w / 2, y0 - 10, "5 x 60 s", 10.5, fill="#555")
+        svg.text(sx + stage_w / 2, y0 - 30, f"{n} worker{'s' if n > 1 else ''}", 12.5, weight="bold", fill="#1F6FB2")
+        svg.text(sx + stage_w / 2, y0 - 12, "5 x 60 s", 10.5, fill="#555")
         for rep in range(5):
-            rx = sx + 3 + rep * (rep_w + rep_gap)
+            rx = sx + 4 + rep * (rep_w + rep_gap)
             for v in range(32):
-                svg.rect(rx, y0 + v * row_h, rep_w, row_h - 1,
-                         busy if v < n else idle, "none")
+                svg.rect(rx, y0 + v * row_h, rep_w, row_h - 1, busy if v < n else idle, "none")
         if si:
             svg.line(sx, y0 - 4, sx, y0 + plot_h + 4, "#999", 1, dash="3,3")
     svg.rect(x0, y0, plot_w, plot_h, "none", "#666", 1)
 
-    # vCPU labels and the sibling bracket
     for v in (0, 8, 15, 16, 24, 31):
-        dy = -3 if v == 15 else (3 if v == 16 else 0)
-        svg.text(x0 - 8, y0 + v * row_h + row_h - 1 + dy, f"vCPU {v}", 10, anchor="end", fill="#333")
-    svg.text(x0 - 60, y0 + plot_h / 2, "vCPU (= worker slot)", 11.5, rotate=-90, fill="#333")
-    bx = x0 + plot_w + 10
+        dy = -4 if v == 15 else (5 if v == 16 else 0)
+        svg.text(x0 - 10, y0 + v * row_h + row_h - 1 + dy, f"vCPU {v}", 10, anchor="end", fill="#333")
+    svg.text(x0 - 92, y0 + plot_h / 2, "vCPU (= worker slot)", 11.5, rotate=-90, fill="#333")
+    bx = x0 + plot_w + 12
     svg.line(bx, y0, bx, y0 + 16 * row_h - 1, "#444", 1.2)
     svg.line(bx, y0 + 16 * row_h, bx, y0 + plot_h, "#C0392B", 1.2)
-    svg.text(bx + 7, y0 + 8 * row_h, "0-15: one thread per", 10, anchor="start", fill="#444")
-    svg.text(bx + 7, y0 + 8 * row_h + 12, "physical core (both)", 10, anchor="start", fill="#444")
-    svg.text(bx + 7, y0 + 24 * row_h - 6, "16-31: Intel = SMT", 10, anchor="start", fill="#C0392B")
-    svg.text(bx + 7, y0 + 24 * row_h + 6, "siblings of 0-15", 10, anchor="start", fill="#C0392B")
-    svg.text(bx + 7, y0 + 24 * row_h + 18, "AMD = 16 more cores", 10, anchor="start", fill="#C0392B")
+    svg.text(bx + 9, y0 + 8 * row_h - 4, "vCPU 0-15:", 10.5, anchor="start", weight="bold", fill="#444")
+    svg.text(bx + 9, y0 + 8 * row_h + 12, "one thread per", 10.5, anchor="start", fill="#444")
+    svg.text(bx + 9, y0 + 8 * row_h + 28, "physical core (both)", 10.5, anchor="start", fill="#444")
+    svg.text(bx + 9, y0 + 24 * row_h - 14, "vCPU 16-31:", 10.5, anchor="start", weight="bold", fill="#C0392B")
+    svg.text(bx + 9, y0 + 24 * row_h + 2, "Intel = SMT siblings", 10.5, anchor="start", fill="#C0392B")
+    svg.text(bx + 9, y0 + 24 * row_h + 18, "of vCPU 0-15", 10.5, anchor="start", fill="#C0392B")
+    svg.text(bx + 9, y0 + 24 * row_h + 34, "AMD = 16 more cores", 10.5, anchor="start", fill="#C0392B")
 
-    # time axis
-    ay = y0 + plot_h + 14
+    ay = y0 + plot_h + 16
     svg.line(x0, ay, x0 + plot_w, ay, "#333", 1)
     for m in range(0, 31, 5):
         tx = x0 + m / 30 * plot_w
-        svg.line(tx, ay, tx, ay + 5, "#333", 1)
-        svg.text(tx, ay + 18, f"{m} min", 10.5, fill="#333")
+        svg.line(tx, ay, tx, ay + 6, "#333", 1)
+        svg.text(tx, ay + 22, f"{m} min", 10.5, fill="#333")
     for rep in range(5):
-        rx = x0 + 3 + rep * (rep_w + rep_gap) + rep_w / 2
-        svg.text(rx, ay + 32, f"rep {rep + 1}", 9.5, fill="#777")
-    svg.text(x0 + plot_w / 2, ay + 50,
-             "Time runs left to right. Each coloured column is one 60-second repetition; the coloured cells in it are the "
-             "N workers running AT THE SAME TIME, one per vCPU, lowest vCPU numbers first.",
+        rx = x0 + 4 + rep * (rep_w + rep_gap) + rep_w / 2
+        svg.text(rx, ay + 40, f"rep {rep + 1}", 9, fill="#777")
+    svg.text(x0 + plot_w / 2, ay + 64,
+             "Time runs left to right. Each coloured column is one 60-second repetition.", 11.5, fill="#333")
+    svg.text(x0 + plot_w / 2, ay + 84,
+             "The coloured cells in a column are the N workers running AT THE SAME TIME, one per vCPU, lowest vCPU first.",
              11.5, fill="#333")
 
-    # zoom: one repetition -> one results.csv row (Intel, workers=4, repeat=3)
     agg = data["c7i.8xlarge"]["raw"][4][2]  # workers=4, repeat=3
-    zy = ay + 78
+    zy = ay + 120
     svg.text(x0, zy, "Zoom on one repetition, e.g. Intel c7i.8xlarge, workers=4, repeat=3 (minutes 12-13):",
              13, anchor="start", weight="bold")
-    zx = x0 + 10
-    bar_w, bar_h = 540, 22
+    zx = x0
+    bar_w, bar_h = 690, 26
     for v in range(4):
         by = zy + 16 + v * (bar_h + 6)
         svg.rect(zx, by, bar_w, bar_h, busy, "none", rx=3)
-        svg.text(zx + 8, by + 15.5, f"vCPU {v}: taskset -c {v} openssl speed -seconds 60 -elapsed -bytes 16384 sha256",
-                 10, anchor="start", fill="#fff", family="monospace")
-        svg.text(zx + bar_w + 8, by + 15.5, "-> kB/s", 10.5, anchor="start", fill="#333")
+        svg.text(zx + 10, by + 18, f"vCPU {v}: taskset -c {v} openssl speed -seconds 60 -elapsed -bytes 16384 sha256",
+                 9.5, anchor="start", fill="#fff", family="monospace")
+        svg.text(zx + bar_w + 10, by + 18, "-> kB/s", 10.5, anchor="start", fill="#333")
     bottom = zy + 16 + 4 * (bar_h + 6)
-    svg.text(zx + bar_w / 2, bottom + 14, "all four start together and run for the same 60 s", 10.5, fill="#555")
-    sx_ = zx + bar_w + 70
+    svg.text(zx + bar_w / 2, bottom + 16, "all four start together and run for the same 60 s", 10.5, fill="#555")
+    sx_ = zx + bar_w + 95
     svg.arrow(sx_ - 15, zy + 16 + 2 * (bar_h + 6) - 3, sx_ + 10, zy + 16 + 2 * (bar_h + 6) - 3)
-    svg.rect(sx_ + 14, zy + 22, 240, 78, "#fff8e6", "#b8860b", 1.2, rx=6)
-    svg.text(sx_ + 134, zy + 42, "script waits for all 4,", 11, fill="#333")
-    svg.text(sx_ + 134, zy + 58, "sums the 4 rates:", 11, fill="#333")
-    svg.text(sx_ + 134, zy + 78, f"{agg:,.2f} kB/s", 11.5, weight="bold", fill="#333")
-    svg.text(sx_ + 134, zy + 94, f"-> results.csv row 4,3,{agg:.2f}", 9.5, fill="#333", family="monospace")
-    svg.text(W / 2, H - 14,
+    svg.rect(sx_ + 14, zy + 14, 290, 112, "#fff8e6", "#b8860b", 1.2, rx=6)
+    svg.text(sx_ + 159, zy + 38, "script waits for all 4,", 11, fill="#333")
+    svg.text(sx_ + 159, zy + 58, "sums the 4 rates:", 11, fill="#333")
+    svg.text(sx_ + 159, zy + 82, f"{agg:,.2f} kB/s", 12, weight="bold", fill="#333")
+    svg.text(sx_ + 159, zy + 108, f"-> results.csv row 4,3,{agg:.2f}", 9.5, fill="#333", family="monospace")
+    svg.text(W / 2, H - 16,
              "30 such rows per instance; the 5 rows of each worker count are averaged into summary.csv.",
              11.5, fill="#333")
     svg.save("diagram-timeline.svg")
@@ -533,7 +563,7 @@ def fig_timeline(data):
 def fig_worker(data):
     """What one worker is: one openssl process on one vCPU, hashing one cached block in a loop."""
     W, H = 1200, 600
-    svg = SVG(W, H)
+    svg = SVG(W, H, scale=1.0)
     blue, dark, red, amber = "#1F6FB2", "#1a1a1a", "#C0392B", "#8a5a00"
     svg.text(W / 2, 34, "One worker = one 'factory'", 24, weight="bold", fill=dark)
     svg.text(W / 2, 62, "one openssl speed process, pinned to one vCPU, hashing one 16 KiB block over and over for 60 seconds",

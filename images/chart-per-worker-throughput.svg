@@ -1,65 +1,65 @@
-<svg xmlns='http://www.w3.org/2000/svg' width='960' height='560' viewBox='0 0 960 560' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
-<rect width='960' height='560' fill='#ffffff'/>
-<text x='480.0' y='34.0' font-size='20' text-anchor='middle' font-weight='bold' fill='#222'>Average throughput of ONE worker as more workers are added</text>
-<text x='480.0' y='58.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#555'>aggregate / N. A flat line means every added worker got a full core's worth of work done.</text>
-<line x1='95.0' y1='470.0' x2='920.0' y2='470.0' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='474.0' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>0</text>
-<line x1='95.0' y1='421.2' x2='920.0' y2='421.2' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='425.2' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>250</text>
-<line x1='95.0' y1='372.5' x2='920.0' y2='372.5' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='376.5' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>500</text>
-<line x1='95.0' y1='323.8' x2='920.0' y2='323.8' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='327.8' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>750</text>
-<line x1='95.0' y1='275.0' x2='920.0' y2='275.0' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='279.0' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>1,000</text>
-<line x1='95.0' y1='226.2' x2='920.0' y2='226.2' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='230.2' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>1,250</text>
-<line x1='95.0' y1='177.5' x2='920.0' y2='177.5' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='181.5' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>1,500</text>
-<line x1='95.0' y1='128.8' x2='920.0' y2='128.8' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='132.8' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>1,750</text>
-<line x1='95.0' y1='80.0' x2='920.0' y2='80.0' stroke='#e3e3e3' stroke-width='1'/>
-<text x='85.0' y='84.0' font-size='12' text-anchor='end' font-weight='normal' fill='#444'>2,000</text>
-<line x1='95.0' y1='80.0' x2='95.0' y2='470.0' stroke='#333' stroke-width='1.2'/>
-<line x1='95.0' y1='470.0' x2='920.0' y2='470.0' stroke='#333' stroke-width='1.2'/>
-<text x='163.8' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>1</text>
-<text x='301.2' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>2</text>
-<text x='438.8' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>4</text>
-<text x='576.2' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>8</text>
-<text x='713.8' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>16</text>
-<text x='851.2' y='492.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#222'>32</text>
-<text x='507.5' y='518.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#333'>Concurrent pinned workers (one OpenSSL process per vCPU)</text>
-<text x='28.0' y='275.0' font-size='13' text-anchor='middle' font-weight='normal' fill='#333' transform='rotate(-90 28 275.0)'>Per-worker throughput (MB/s, decimal)</text>
-<polyline points='163.8,123.0 301.2,126.5 438.8,120.5 576.2,120.4 713.8,156.7 851.2,269.2' fill='none' stroke='#1F6FB2' stroke-width='3' stroke-linejoin='round'/>
-<circle cx='163.8' cy='123.0' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='163.8' y='145.0' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,780</text>
-<circle cx='301.2' cy='126.5' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='301.2' y='148.5' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,762</text>
-<circle cx='438.8' cy='120.5' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='438.8' y='142.5' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,792</text>
-<circle cx='576.2' cy='120.4' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='576.2' y='142.4' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,793</text>
-<circle cx='713.8' cy='156.7' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='713.8' y='178.7' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,607</text>
-<circle cx='851.2' cy='269.2' r='5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='851.2' y='291.2' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,030</text>
-<polyline points='163.8,118.0 301.2,117.8 438.8,117.8 576.2,117.8 713.8,117.8 851.2,118.0' fill='none' stroke='#D7301F' stroke-width='3' stroke-linejoin='round'/>
-<circle cx='163.8' cy='118.0' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='163.8' y='106.0' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,805</text>
-<circle cx='301.2' cy='117.8' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='301.2' y='105.8' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
-<circle cx='438.8' cy='117.8' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='438.8' y='105.8' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
-<circle cx='576.2' cy='117.8' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='576.2' y='105.8' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
-<circle cx='713.8' cy='117.8' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='713.8' y='105.8' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
-<circle cx='851.2' cy='118.0' r='5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='851.2' y='106.0' font-size='11.5' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,805</text>
-<line x1='109.0' y1='94.0' x2='143.0' y2='94.0' stroke='#1F6FB2' stroke-width='3'/>
-<circle cx='126.0' cy='94.0' r='4.5' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
-<text x='151.0' y='98.0' font-size='12.5' text-anchor='start' font-weight='normal' fill='#222'>Intel c7i.8xlarge (Xeon Platinum 8488C)</text>
-<line x1='109.0' y1='116.0' x2='143.0' y2='116.0' stroke='#D7301F' stroke-width='3'/>
-<circle cx='126.0' cy='116.0' r='4.5' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
-<text x='151.0' y='120.0' font-size='12.5' text-anchor='start' font-weight='normal' fill='#222'>AMD c7a.8xlarge (EPYC 9R14)</text>
+<svg xmlns='http://www.w3.org/2000/svg' width='1100' height='600' viewBox='0 0 1100 600' font-family='Segoe UI, Helvetica, Arial, sans-serif'>
+<rect width='1100' height='600' fill='#ffffff'/>
+<text x='550.0' y='34.0' font-size='26.0' text-anchor='middle' font-weight='bold' fill='#1a1a1a'>Average throughput of ONE worker as more workers are added</text>
+<text x='550.0' y='58.0' font-size='16.2' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>aggregate / N. A flat line means every added worker got a full core's worth of work done.</text>
+<line x1='105.0' y1='505.0' x2='1060.0' y2='505.0' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='509.0' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>0</text>
+<line x1='105.0' y1='454.4' x2='1060.0' y2='454.4' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='458.4' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>250</text>
+<line x1='105.0' y1='403.8' x2='1060.0' y2='403.8' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='407.8' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>500</text>
+<line x1='105.0' y1='353.1' x2='1060.0' y2='353.1' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='357.1' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>750</text>
+<line x1='105.0' y1='302.5' x2='1060.0' y2='302.5' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='306.5' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>1,000</text>
+<line x1='105.0' y1='251.9' x2='1060.0' y2='251.9' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='255.9' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>1,250</text>
+<line x1='105.0' y1='201.2' x2='1060.0' y2='201.2' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='205.2' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>1,500</text>
+<line x1='105.0' y1='150.6' x2='1060.0' y2='150.6' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='154.6' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>1,750</text>
+<line x1='105.0' y1='100.0' x2='1060.0' y2='100.0' stroke='#cfcfcf' stroke-width='1.50'/>
+<text x='95.0' y='104.0' font-size='15.6' text-anchor='end' font-weight='normal' fill='#1a1a1a'>2,000</text>
+<line x1='105.0' y1='100.0' x2='105.0' y2='505.0' stroke='#333' stroke-width='1.80'/>
+<line x1='105.0' y1='505.0' x2='1060.0' y2='505.0' stroke='#333' stroke-width='1.80'/>
+<text x='184.6' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>1</text>
+<text x='343.8' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>2</text>
+<text x='502.9' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>4</text>
+<text x='662.1' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>8</text>
+<text x='821.2' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>16</text>
+<text x='980.4' y='527.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>32</text>
+<text x='582.5' y='553.0' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a'>Concurrent pinned workers (one OpenSSL process per vCPU)</text>
+<text x='28.0' y='302.5' font-size='16.9' text-anchor='middle' font-weight='normal' fill='#1a1a1a' transform='rotate(-90 28 302.5)'>Per-worker throughput (MB/s, decimal)</text>
+<polyline points='184.6,144.6 343.8,148.3 502.9,142.1 662.1,141.9 821.2,179.6 980.4,296.5' fill='none' stroke='#1F6FB2' stroke-width='3.75' stroke-linejoin='round'/>
+<circle cx='184.6' cy='144.6' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='184.6' y='166.6' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,780</text>
+<circle cx='343.8' cy='148.3' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='343.8' y='170.3' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,762</text>
+<circle cx='502.9' cy='142.1' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='502.9' y='164.1' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,792</text>
+<circle cx='662.1' cy='141.9' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='662.1' y='163.9' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,793</text>
+<circle cx='821.2' cy='179.6' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='821.2' y='201.6' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,607</text>
+<circle cx='980.4' cy='296.5' r='6.0' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='980.4' y='318.5' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#1F6FB2'>1,030</text>
+<polyline points='184.6,139.5 343.8,139.3 502.9,139.3 662.1,139.2 821.2,139.3 980.4,139.5' fill='none' stroke='#D7301F' stroke-width='3.75' stroke-linejoin='round'/>
+<circle cx='184.6' cy='139.5' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='184.6' y='127.5' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,805</text>
+<circle cx='343.8' cy='139.3' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='343.8' y='127.3' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
+<circle cx='502.9' cy='139.3' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='502.9' y='127.3' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
+<circle cx='662.1' cy='139.2' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='662.1' y='127.2' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
+<circle cx='821.2' cy='139.3' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='821.2' y='127.3' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,806</text>
+<circle cx='980.4' cy='139.5' r='6.0' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='980.4' y='127.5' font-size='15.0' text-anchor='middle' font-weight='bold' fill='#D7301F'>1,805</text>
+<line x1='119.0' y1='455.0' x2='153.0' y2='455.0' stroke='#1F6FB2' stroke-width='4.50'/>
+<circle cx='136.0' cy='455.0' r='5.4' fill='#1F6FB2' stroke='#fff' stroke-width='1.5'/>
+<text x='161.0' y='459.0' font-size='16.2' text-anchor='start' font-weight='normal' fill='#1a1a1a'>Intel c7i.8xlarge (Xeon Platinum 8488C)</text>
+<line x1='119.0' y1='477.0' x2='153.0' y2='477.0' stroke='#D7301F' stroke-width='4.50'/>
+<circle cx='136.0' cy='477.0' r='5.4' fill='#D7301F' stroke='#fff' stroke-width='1.5'/>
+<text x='161.0' y='481.0' font-size='16.2' text-anchor='start' font-weight='normal' fill='#1a1a1a'>AMD c7a.8xlarge (EPYC 9R14)</text>
 </svg>
