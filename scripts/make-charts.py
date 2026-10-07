@@ -532,81 +532,89 @@ def fig_timeline(data):
 
 def fig_worker(data):
     """What one worker is: one openssl process on one vCPU, hashing one cached block in a loop."""
-    W, H = 1000, 470
+    W, H = 1200, 600
     svg = SVG(W, H)
-    blue, grey, red = "#1F6FB2", "#777", "#C0392B"
-    svg.text(W / 2, 28, "One worker = one 'factory': one openssl speed process pinned to one vCPU, hashing one 16 KiB block for 60 s",
-             15.5, weight="bold")
+    blue, dark, red, amber = "#1F6FB2", "#1a1a1a", "#C0392B", "#8a5a00"
+    svg.text(W / 2, 34, "One worker = one 'factory'", 24, weight="bold", fill=dark)
+    svg.text(W / 2, 62, "one openssl speed process, pinned to one vCPU, hashing one 16 KiB block over and over for 60 seconds",
+             15, fill=dark)
 
-    # the vCPU / core box
-    bx, by, bw, bh = 250, 70, 500, 270
-    svg.rect(bx, by, bw, bh, "#f3f7fb", blue, 1.6, rx=10)
-    svg.text(bx + bw / 2, by + 22, "vCPU N  (pinned with taskset -c N)", 13, weight="bold", fill=blue)
+    # the vCPU box
+    bx, by, bw, bh = 300, 100, 600, 360
+    svg.rect(bx, by, bw, bh, "#e8f1fa", blue, 3, rx=14)
+    svg.text(bx + bw / 2, by + 32, "vCPU N   (pinned with  taskset -c N)", 17, weight="bold", fill=blue)
 
     # L1 cache with the block
-    cx, cy, cw, ch = bx + 22, by + 60, 160, 110
-    svg.rect(cx, cy, cw, ch, "#fff", grey, 1.2, rx=6)
-    svg.text(cx + cw / 2, cy + 18, "L1 cache of this core", 11.5, fill="#333")
-    svg.rect(cx + 25, cy + 32, cw - 50, 50, "#dfe9f3", blue, 1.2, rx=4)
-    svg.text(cx + cw / 2, cy + 52, "16 KiB block", 12, weight="bold", fill="#222")
-    svg.text(cx + cw / 2, cy + 70, "(same bytes each time)", 9.5, fill="#555")
-    svg.text(cx + cw / 2, cy + ch - 8, "read ~110,000 times/s", 10, fill="#555")
+    cx, cy, cw, ch = bx + 28, by + 62, 215, 150
+    svg.rect(cx, cy, cw, ch, "#ffffff", dark, 2, rx=8)
+    svg.text(cx + cw / 2, cy + 26, "L1 cache of this core", 15, weight="bold", fill=dark)
+    svg.rect(cx + 22, cy + 44, cw - 44, 62, "#bcd4ec", blue, 2, rx=6)
+    svg.text(cx + cw / 2, cy + 70, "16 KiB block", 16, weight="bold", fill=dark)
+    svg.text(cx + cw / 2, cy + 92, "same bytes each time", 12, fill=dark)
+    svg.text(cx + cw / 2, cy + ch - 14, "read ~110,000 times per second", 12, fill=dark)
 
     # SHA unit
-    sx, sy, sw, sh = bx + 318, by + 60, 160, 110
-    svg.rect(sx, sy, sw, sh, "#fff", grey, 1.2, rx=6)
-    svg.text(sx + sw / 2, sy + 18, "execution unit", 11.5, fill="#333")
-    svg.rect(sx + 20, sy + 32, sw - 40, 50, "#fde8e4", red, 1.2, rx=4)
-    svg.text(sx + sw / 2, sy + 52, "SHA-256", 13, weight="bold", fill="#222")
-    svg.text(sx + sw / 2, sy + 70, "sha_ni instructions", 10, fill="#555")
-    svg.text(sx + sw / 2, sy + sh - 8, "the only limiting resource", 10, fill=red)
+    sx, sy, sw, sh = bx + bw - 28 - 215, cy, 215, 150
+    svg.rect(sx, sy, sw, sh, "#ffffff", dark, 2, rx=8)
+    svg.text(sx + sw / 2, sy + 26, "execution unit of this core", 15, weight="bold", fill=dark)
+    svg.rect(sx + 22, sy + 44, sw - 44, 62, "#f6c7bf", red, 2, rx=6)
+    svg.text(sx + sw / 2, sy + 70, "SHA-256", 17, weight="bold", fill=dark)
+    svg.text(sx + sw / 2, sy + 92, "sha_ni instructions", 12, fill=dark)
+    svg.text(sx + sw / 2, sy + sh - 14, "the only limiting resource", 12.5, weight="bold", fill=red)
 
     # loop arrows between them
-    svg.arrow(cx + cw + 6, cy + 44, sx - 6, cy + 44, blue)
-    svg.text((cx + cw + sx) / 2, cy + 36, "block in", 10.5, fill=blue)
-    svg.arrow(sx - 6, cy + 80, cx + cw + 6, cy + 80, blue)
-    svg.text((cx + cw + sx) / 2, cy + 96, "done, again", 10.5, fill=blue)
-    svg.text((cx + cw + sx) / 2, cy + 62, "tight loop", 10.5, fill="#555")
+    mid = (cx + cw + sx) / 2
+    svg.line(cx + cw + 8, cy + 58, sx - 10, cy + 58, blue, 3)
+    svg.arrow(sx - 24, cy + 58, sx - 8, cy + 58, blue)
+    svg.text(mid, cy + 48, "block in", 14, weight="bold", fill=blue)
+    svg.line(sx - 8, cy + 108, cx + cw + 10, cy + 108, blue, 3)
+    svg.arrow(cx + cw + 24, cy + 108, cx + cw + 8, cy + 108, blue)
+    svg.text(mid, cy + 128, "done, again", 14, weight="bold", fill=blue)
+    svg.text(mid, cy + 86, "tight loop", 13, fill=dark)
 
     # timer + counter
-    ty = by + 200
-    svg.rect(bx + 30, ty, 200, 48, "#fff", grey, 1.2, rx=6)
-    svg.text(bx + 130, ty + 20, "timer: 60 seconds", 12, weight="bold", fill="#222")
-    svg.text(bx + 130, ty + 37, "wall-clock (-elapsed)", 10, fill="#555")
-    svg.rect(bx + 270, ty, 200, 48, "#fff", grey, 1.2, rx=6)
-    svg.text(bx + 370, ty + 20, "counter: hashes finished", 12, weight="bold", fill="#222")
-    svg.text(bx + 370, ty + 37, "+1 per completed 16 KiB hash", 10, fill="#555")
+    ty = by + 240
+    svg.rect(bx + 28, ty, 262, 78, "#ffffff", dark, 2, rx=8)
+    svg.text(bx + 159, ty + 30, "timer: 60 seconds", 16, weight="bold", fill=dark)
+    svg.text(bx + 159, ty + 56, "wall-clock time  (-elapsed)", 12.5, fill=dark)
+    svg.rect(bx + bw - 28 - 262, ty, 262, 78, "#ffffff", dark, 2, rx=8)
+    svg.text(bx + bw - 159, ty + 30, "counter: hashes finished", 16, weight="bold", fill=dark)
+    svg.text(bx + bw - 159, ty + 56, "+1 per completed 16 KiB hash", 12.5, fill=dark)
 
     # output
-    ox, oy = bx + bw + 60, by + 95
-    svg.arrow(bx + bw + 4, by + bh / 2, ox - 6, by + bh / 2, "#333")
-    svg.rect(ox, oy, 180, 80, "#fff8e6", "#b8860b", 1.4, rx=6)
-    svg.text(ox + 90, oy + 20, "reported after 60 s:", 11, fill="#333")
-    svg.text(ox + 90, oy + 40, "counter x 16,384 / 60", 11.5, family="monospace", fill="#222")
-    svg.text(ox + 90, oy + 60, "= bytes per second", 12, weight="bold", fill="#222")
+    ox, oy, ow, oh = bx + bw + 70, by + 80, 220, 200
+    svg.line(bx + bw + 4, by + bh / 2, ox - 14, by + bh / 2, dark, 3)
+    svg.arrow(ox - 30, by + bh / 2, ox - 6, by + bh / 2, dark)
+    svg.rect(ox, oy, ow, oh, "#fff2cc", amber, 2.5, rx=8)
+    svg.text(ox + ow / 2, oy + 28, "reported after 60 s", 14, weight="bold", fill=dark)
+    svg.text(ox + ow / 2, oy + 58, "counter x 16,384", 15, family="monospace", fill=dark)
+    svg.text(ox + ow / 2, oy + 80, "-----------------", 15, family="monospace", fill=dark)
+    svg.text(ox + ow / 2, oy + 102, "60 seconds", 15, family="monospace", fill=dark)
+    svg.text(ox + ow / 2, oy + 134, "= bytes per second", 15, weight="bold", fill=dark)
     one = data["c7a.8xlarge"]["summary"][1]["agg"]
-    svg.text(ox + 90, oy + 100, f"e.g. {one:,.0f} kB/s", 11, family="monospace", fill="#333")
-    svg.text(ox + 90, oy + 116, f"= {one / 1e6:.2f} GB/s, one worker alone", 10.5, fill="#555")
-    svg.text(ox + 90, oy + 132, "This number is the worker's", 10.5, fill="#333")
-    svg.text(ox + 90, oy + 146, "THROUGHPUT.", 11, weight="bold", fill="#333")
+    svg.text(ox + ow / 2, oy + 162, f"e.g. {one:,.0f} kB/s", 13.5, family="monospace", fill=dark)
+    svg.text(ox + ow / 2, oy + 184, f"= {one / 1e6:.2f} GB/s, worker alone", 12.5, fill=dark)
+    svg.text(ox + ow / 2, oy + oh + 30, "This number is the worker's", 14, fill=dark)
+    svg.text(ox + ow / 2, oy + oh + 54, "THROUGHPUT", 18, weight="bold", fill=amber)
 
     # things deliberately NOT involved, on the left
-    nx = 40
-    svg.text(nx + 85, by + 10, "not involved", 12, weight="bold", fill=grey)
+    nx, nw = 40, 190
+    svg.text(nx + nw / 2, by + 24, "NOT involved", 16, weight="bold", fill=dark)
     for i, label in enumerate(("disk", "network", "main memory (RAM)", "other workers")):
-        yy = by + 40 + i * 60
-        svg.rect(nx, yy, 170, 38, "#fafafa", "#bbb", 1, rx=6)
-        svg.text(nx + 85, yy + 24, label, 11.5, fill="#555")
-        svg.line(nx + 180, yy + 19, bx - 8, yy + 19, "#bbb", 1.2, dash="4,4")
-        svg.line(bx - 22, yy + 11, bx - 8, yy + 27, red, 2)
-        svg.line(bx - 22, yy + 27, bx - 8, yy + 11, red, 2)
+        yy = by + 50 + i * 76
+        svg.rect(nx, yy, nw, 52, "#f0f0f0", "#666", 1.8, rx=8)
+        svg.text(nx + nw / 2, yy + 33, label, 15, fill=dark)
+        svg.line(nx + nw + 6, yy + 26, bx - 10, yy + 26, "#888", 2, dash="6,5")
+        svg.line(bx - 32, yy + 14, bx - 8, yy + 38, red, 3.5)
+        svg.line(bx - 32, yy + 38, bx - 8, yy + 14, red, 3.5)
 
-    svg.text(W / 2, H - 60, "N workers = N copies of this, each on its own vCPU, started at the same instant.",
-             12.5, fill="#333")
-    svg.text(W / 2, H - 40, "They never talk to each other. Aggregate throughput = the sum of the N reported numbers.",
-             12.5, fill="#333")
-    svg.text(W / 2, H - 16, "Because nothing outside the core is used, a worker can only slow down if its core is shared "
-             "with another worker (SMT) or runs at a lower clock.", 11.5, fill=red)
+    svg.text(W / 2, H - 100, "N workers = N copies of this, each on its own vCPU, all started at the same instant.",
+             15, fill=dark)
+    svg.text(W / 2, H - 74, "They never talk to each other. Aggregate throughput = the sum of the N reported numbers.",
+             15, fill=dark)
+    svg.rect(60, H - 52, W - 120, 36, "#fde8e4", red, 1.5, rx=8)
+    svg.text(W / 2, H - 28, "Nothing outside the core is used, so a worker can only slow down if its core is shared "
+             "with another worker (SMT) or runs at a lower clock.", 14, weight="bold", fill=red)
     svg.save("diagram-one-worker.svg")
 
 
