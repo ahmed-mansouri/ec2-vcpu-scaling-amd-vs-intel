@@ -47,7 +47,7 @@ This repository measures exactly that effect with a controlled, CPU-bound worklo
 
 ### 2.1 The scenario in plain words
 
-Picture a small factory with one job: take a 16 KiB block of data and compute its SHA-256 hash. One **worker** is one such factory, implemented as one `openssl speed` process tied to one vCPU. It hashes the same block over and over, as fast as the hardware allows, for 60 seconds, then reports how many bytes it got through. Nothing is read from disk or network and nothing is sent between workers; the block lives in the core's cache, so the only thing that limits a worker is the execution speed of the core it runs on.
+Picture a small factory with one job: take a 16 KiB (16 x 1024 = 16,384 bytes) block of data and compute its SHA-256 hash. One **worker** is one such factory, implemented as one `openssl speed` process tied to one vCPU. It hashes the same block over and over, as fast as the hardware allows, for 60 seconds, then reports how many bytes it got through. Nothing is read from disk or network and nothing is sent between workers; the block lives in the core's cache, so the only thing that limits a worker is the execution speed of the core it runs on.
 
 ![One worker: one openssl process on one vCPU hashing one cached block](images/diagram-one-worker.svg)
 
