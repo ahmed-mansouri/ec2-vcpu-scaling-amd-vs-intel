@@ -170,7 +170,7 @@ The command behind every worker has three parts, and each one removes a differen
 
 ### 4.1 One worker
 
-A single worker is:
+A **worker** is one `openssl speed` process pinned to one vCPU (the "factory" of section 2.1). Its exact command is:
 
 ```bash
 taskset -c "$CPU" openssl speed -seconds 60 -elapsed -bytes 16384 sha256
@@ -184,6 +184,10 @@ taskset -c "$CPU" openssl speed -seconds 60 -elapsed -bytes 16384 sha256
 ### 4.2 N workers
 
 For a given worker count N, the script starts N such processes **simultaneously**, each pinned to a different vCPU, waits for all of them, reads each worker's final throughput line, and **sums** them. That sum is the aggregate throughput for that repetition. Each N is repeated 5 times and the mean is reported.
+
+The whole sweep is therefore 30 repetitions laid end to end. Within one repetition the N workers run in parallel; repetitions never overlap; and the worker count only grows between stages. The diagram shows the complete schedule and zooms in on one repetition to show how its `results.csv` row is produced:
+
+![Scheduling of the 30 repetitions on the 32 vCPUs](images/diagram-timeline.svg)
 
 ### 4.3 Which vCPUs get a worker
 
@@ -652,6 +656,7 @@ wrote images/chart-16-vs-32.svg
 wrote images/diagram-topology.svg
 wrote images/diagram-worker-placement.svg
 wrote images/diagram-test-flow.svg
+wrote images/diagram-timeline.svg
 AMD/Intel aggregate at 32:      +75.29%
 Intel/AMD aggregate at 32:      -42.95%
 Intel 16->32 aggregate gain:    +28.16%

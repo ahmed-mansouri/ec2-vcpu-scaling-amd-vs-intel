@@ -444,6 +444,92 @@ def fig_flow():
     svg.save("diagram-test-flow.svg")
 
 
+def fig_timeline(data):
+    """When each worker runs, on which vCPU, over the 30-minute sweep."""
+    W, H = 1100, 620
+    svg = SVG(W, H)
+    svg.text(W / 2, 28, "How the 30 repetitions are scheduled on the 32 vCPUs (same on both instances)",
+             17, weight="bold")
+
+    x0, y0 = 92, 78
+    stage_w, rep_gap = 148, 2
+    rep_w = (stage_w - 4 * rep_gap - 6) / 5
+    row_h = 8
+    plot_w = stage_w * len(WORKERS)
+    plot_h = row_h * 32
+    busy, idle = "#1F6FB2", "#e9e9e9"
+
+    # vCPU grid, one row per vCPU, one column per repetition
+    for si, n in enumerate(WORKERS):
+        sx = x0 + si * stage_w
+        svg.text(sx + stage_w / 2, y0 - 26, f"{n} worker{'s' if n > 1 else ''}", 12.5, weight="bold", fill="#1F6FB2")
+        svg.text(sx + stage_w / 2, y0 - 10, "5 x 60 s", 10.5, fill="#555")
+        for rep in range(5):
+            rx = sx + 3 + rep * (rep_w + rep_gap)
+            for v in range(32):
+                svg.rect(rx, y0 + v * row_h, rep_w, row_h - 1,
+                         busy if v < n else idle, "none")
+        if si:
+            svg.line(sx, y0 - 4, sx, y0 + plot_h + 4, "#999", 1, dash="3,3")
+    svg.rect(x0, y0, plot_w, plot_h, "none", "#666", 1)
+
+    # vCPU labels and the sibling bracket
+    for v in (0, 8, 15, 16, 24, 31):
+        dy = -3 if v == 15 else (3 if v == 16 else 0)
+        svg.text(x0 - 8, y0 + v * row_h + row_h - 1 + dy, f"vCPU {v}", 10, anchor="end", fill="#333")
+    svg.text(x0 - 60, y0 + plot_h / 2, "vCPU (= worker slot)", 11.5, rotate=-90, fill="#333")
+    bx = x0 + plot_w + 10
+    svg.line(bx, y0, bx, y0 + 16 * row_h - 1, "#444", 1.2)
+    svg.line(bx, y0 + 16 * row_h, bx, y0 + plot_h, "#C0392B", 1.2)
+    svg.text(bx + 7, y0 + 8 * row_h, "0-15: one thread per", 10, anchor="start", fill="#444")
+    svg.text(bx + 7, y0 + 8 * row_h + 12, "physical core (both)", 10, anchor="start", fill="#444")
+    svg.text(bx + 7, y0 + 24 * row_h - 6, "16-31: Intel = SMT", 10, anchor="start", fill="#C0392B")
+    svg.text(bx + 7, y0 + 24 * row_h + 6, "siblings of 0-15", 10, anchor="start", fill="#C0392B")
+    svg.text(bx + 7, y0 + 24 * row_h + 18, "AMD = 16 more cores", 10, anchor="start", fill="#C0392B")
+
+    # time axis
+    ay = y0 + plot_h + 14
+    svg.line(x0, ay, x0 + plot_w, ay, "#333", 1)
+    for m in range(0, 31, 5):
+        tx = x0 + m / 30 * plot_w
+        svg.line(tx, ay, tx, ay + 5, "#333", 1)
+        svg.text(tx, ay + 18, f"{m} min", 10.5, fill="#333")
+    for rep in range(5):
+        rx = x0 + 3 + rep * (rep_w + rep_gap) + rep_w / 2
+        svg.text(rx, ay + 32, f"rep {rep + 1}", 9.5, fill="#777")
+    svg.text(x0 + plot_w / 2, ay + 50,
+             "Time runs left to right. Each coloured column is one 60-second repetition; the coloured cells in it are the "
+             "N workers running AT THE SAME TIME, one per vCPU, lowest vCPU numbers first.",
+             11.5, fill="#333")
+
+    # zoom: one repetition -> one results.csv row (Intel, workers=4, repeat=3)
+    agg = data["c7i.8xlarge"]["raw"][4][2]  # workers=4, repeat=3
+    zy = ay + 78
+    svg.text(x0, zy, "Zoom on one repetition, e.g. Intel c7i.8xlarge, workers=4, repeat=3 (minutes 12-13):",
+             13, anchor="start", weight="bold")
+    zx = x0 + 10
+    bar_w, bar_h = 540, 22
+    for v in range(4):
+        by = zy + 16 + v * (bar_h + 6)
+        svg.rect(zx, by, bar_w, bar_h, busy, "none", rx=3)
+        svg.text(zx + 8, by + 15.5, f"vCPU {v}: taskset -c {v} openssl speed -seconds 60 -elapsed -bytes 16384 sha256",
+                 10, anchor="start", fill="#fff", family="monospace")
+        svg.text(zx + bar_w + 8, by + 15.5, "-> kB/s", 10.5, anchor="start", fill="#333")
+    bottom = zy + 16 + 4 * (bar_h + 6)
+    svg.text(zx + bar_w / 2, bottom + 14, "all four start together and run for the same 60 s", 10.5, fill="#555")
+    sx_ = zx + bar_w + 70
+    svg.arrow(sx_ - 15, zy + 16 + 2 * (bar_h + 6) - 3, sx_ + 10, zy + 16 + 2 * (bar_h + 6) - 3)
+    svg.rect(sx_ + 14, zy + 22, 240, 78, "#fff8e6", "#b8860b", 1.2, rx=6)
+    svg.text(sx_ + 134, zy + 42, "script waits for all 4,", 11, fill="#333")
+    svg.text(sx_ + 134, zy + 58, "sums the 4 rates:", 11, fill="#333")
+    svg.text(sx_ + 134, zy + 78, f"{agg:,.2f} kB/s", 11.5, weight="bold", fill="#333")
+    svg.text(sx_ + 134, zy + 94, f"-> results.csv row 4,3,{agg:.2f}", 9.5, fill="#333", family="monospace")
+    svg.text(W / 2, H - 14,
+             "30 such rows per instance; the 5 rows of each worker count are averaged into summary.csv.",
+             11.5, fill="#333")
+    svg.save("diagram-timeline.svg")
+
+
 def main() -> None:
     IMAGES.mkdir(exist_ok=True)
     data = {key: load(key) for key, *_ in INSTANCES}
@@ -455,6 +541,7 @@ def main() -> None:
     fig_topology()
     fig_placement()
     fig_flow()
+    fig_timeline(data)
 
     # Print derived numbers used in README so they can be checked.
     i, a = data["c7i.8xlarge"]["summary"], data["c7a.8xlarge"]["summary"]
