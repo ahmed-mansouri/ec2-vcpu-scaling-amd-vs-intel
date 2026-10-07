@@ -26,8 +26,7 @@ Everything needed to check or redo this work is in this repository: the benchmar
 8. [Notices, caveats and what this does not prove](#8-notices-caveats-and-what-this-does-not-prove)
 9. [Conclusion](#9-conclusion)
 10. [Repository layout and how to regenerate the figures](#10-repository-layout-and-how-to-regenerate-the-figures)
-11. [Appendix A: pitfalls met during the run](#appendix-a-pitfalls-met-during-the-run)
-12. [Appendix B: full raw data](#appendix-b-full-raw-data)
+11. [Appendix: full raw data](#appendix-full-raw-data)
 
 ---
 
@@ -522,8 +521,8 @@ Worked example for the Intel 32-worker row, so the formula is concrete:
 
 ```text
 baseline            = mean of the five 1-worker runs = 1,779,540.57 kB/s
-ideal at 32 workers = 32 x 1,779,540.57            = 56,945,298.24 kB/s
-measured at 32      =                                 32,949,304.25 kB/s
+ideal at 32 workers = 32 x 1,779,540.57  = 56,945,298.24 kB/s
+measured at 32      = 32,949,304.25 kB/s
 efficiency          = 32,949,304.25 / 56,945,298.24  = 0.5786  ->  57.86 %
 ```
 
@@ -687,21 +686,7 @@ The script exits with an error if any recomputed value differs from the `summary
 
 To run the benchmark on your own instances, follow section 5. Changing `DURATION`, `REPEATS`, `ALGORITHM` or `BLOCK_SIZE` only requires setting the environment variable; the script also adapts the worker counts to instances with fewer than 32 vCPUs.
 
-## Appendix A: pitfalls met during the run
-
-Recorded so that nobody loses time on them again.
-
-**`syntax error near unexpected token ')'` on line 11.** The first version of the script had the IMDS URLs wrapped in angle brackets (`<http://169.254.169.254/...>`), a copy-paste artefact from a chat/markdown renderer. Bash treats `<` and `>` as redirections. Fix: plain quoted URLs. Check any script with `bash -n` before a 30-minute run. Note that `< <(` on the `mapfile` line is legitimate process substitution and must stay.
-
-**`Permission denied` when "running" `system-info.txt`.** Typing the path of a text file at the prompt tries to execute it. Use `cat`. Harmless.
-
-**`package kernel-core is not installed`.** The AL2023 kernel package has a different name; `uname -a` already captured the running kernel. Harmless.
-
-**`DURATION=120` is 1 hour, not 2.** 6 worker counts x 5 repetitions x 120 s = 3,600 s. The N workers of one repetition run concurrently, so a 32-worker repetition still takes 120 s, not 32 x 120 s. The published run used `DURATION=60` (30 minutes).
-
-**Only one CPU busy at the start.** That is the 1-worker stage. The sweep moves to 2, 4, 8, 16 and finally 32 workers every `REPEATS x DURATION` seconds.
-
-## Appendix B: full raw data
+## Appendix: full raw data
 
 Every repetition, in kB/s, straight from `results/*/results.csv`.
 
