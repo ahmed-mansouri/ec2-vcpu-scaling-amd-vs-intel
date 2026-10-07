@@ -1,5 +1,7 @@
 # 32 vCPUs are not always 32 cores: measuring CPU scaling on AMD `c7a.8xlarge` versus Intel `c7i.8xlarge`
 
+> **Disclaimer.** This article is a personal project and I am solely responsible for its content. The opinions, methods, measurements and conclusions are mine alone and do not represent the views, positions or recommendations of my employer. The article is provided for educational purposes only, without warranty of any kind, and should not be used as the sole basis for any purchasing or architectural decision.
+
 A reproducible experiment showing why two EC2 instances with the **same vCPU count** can deliver very different **total throughput** once every vCPU is busy, and why "CPU utilisation is 100%" tells you nothing about how much useful work is being done.
 
 | | Intel `c7i.8xlarge` | AMD `c7a.8xlarge` |
