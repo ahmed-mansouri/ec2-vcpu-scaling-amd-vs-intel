@@ -268,7 +268,7 @@ aws ec2 run-instances \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=intel-vm}]'
 ```
 
-Connect to each instance over SSH (`ssh ec2-user@<public-ip>`, then `sudo -i`); this run used two SSH sessions open side by side in iTerm2. If you prefer not to open port 22, attach an IAM instance profile with `AmazonSSMManagedInstanceCore` instead and connect with Session Manager; the rest of the procedure is identical. Nothing else needs to be installed: `openssl`, `taskset` (util-linux), `lscpu`, `awk` and `curl` are all part of the base AL2023 image.
+Connect to each instance over SSH (`ssh ec2-user@<public-ip>`, then `sudo -i`); this run used two SSH sessions open side by side in iTerm2. Nothing else needs to be installed: `openssl`, `taskset` (util-linux), `lscpu`, `awk` and `curl` are all part of the base AL2023 image.
 
 ### Step 2. Verify what you got
 
