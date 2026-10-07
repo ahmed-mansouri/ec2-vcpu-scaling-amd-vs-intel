@@ -10,6 +10,8 @@ A reproducible experiment showing why two EC2 instances with the **same vCPU cou
 | Aggregate SHA-256 throughput, 32 workers | 32.95 GB/s | 57.76 GB/s |
 | Scaling efficiency at 32 workers | **57.86 %** | **99.99 %** |
 
+> **What this is and is not.** This is a controlled demonstration of one effect: how aggregate throughput scales with vCPU count when every vCPU runs a CPU-saturating worker. It is not an instance-selection guide. Choosing between these instances for a real workload depends on that workload's behaviour under load (memory, I/O, cache footprint), on price-performance in your region and purchase model, and on availability, none of which this test measures. Use it to understand *why* two 32-vCPU instances can finish different amounts of work at 100 % CPU, then benchmark your own workload before deciding.
+
 Everything needed to check or redo this work is in this repository: the benchmark script, every raw measurement, the exact topology and software versions of both machines, and the script that regenerates every chart from the raw CSV files.
 
 ---
