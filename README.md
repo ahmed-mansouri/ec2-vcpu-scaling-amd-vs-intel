@@ -45,6 +45,20 @@ This repository measures exactly that effect with a controlled, CPU-bound worklo
 
 > If I run N independent, CPU-bound workers, each pinned to its own vCPU, how does the **total useful throughput** grow with N on each instance, and how much of the "advertised" capacity (N times one worker) do I actually get once all 32 vCPUs are busy?
 
+### 2.1 The scenario in plain words
+
+Picture a small factory with one job: take a 16 KiB block of data and compute its SHA-256 hash. One **worker** is one such factory, implemented as one `openssl speed` process tied to one vCPU. It hashes the same block over and over, as fast as the hardware allows, for 60 seconds, then reports how many bytes it got through. Nothing is read from disk or network and nothing is sent between workers; the block lives in the core's cache, so the only thing that limits a worker is the execution speed of the core it runs on.
+
+**Throughput** in this article is that production rate: **bytes hashed per second**. A lone worker on either machine manages about 1.8 GB/s, so one worker completes roughly 110,000 hashes of 16 KiB every second.
+
+The experiment then opens more factories. With N workers running at the same time on N different vCPUs, the **aggregate throughput** is simply the sum of what the N workers each reported: the number of bytes the whole instance hashed per second. The question is whether opening the 17th to 32nd factory adds as much output as opening the 1st to 16th did. On a machine with 32 real cores it should; on a machine where vCPUs 16 to 31 share cores with vCPUs 0 to 15, each new factory has to share its machines with an existing one.
+
+The word *useful* matters. A vCPU can be 100 % busy and still finish less work, because "busy" counts time spent, not hashes completed. Counting bytes hashed measures the **output** of the machine. CPU utilisation measures its **occupancy**. This test deliberately measures the former.
+
+SHA-256 stands in for any fixed unit of work: compressing a chunk, encoding a frame, scoring a model, pricing a trade. The structure, "a repeatable CPU-bound task, count completions per second, add up across workers", is the same.
+
+### 2.2 The metric
+
 The metric is **scaling efficiency**:
 
 ```text
