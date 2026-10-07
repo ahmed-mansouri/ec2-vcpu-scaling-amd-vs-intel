@@ -160,6 +160,14 @@ Both instances ran the **same binary build** of OpenSSL (`openssl version -a` is
 
 ## 4. The workload and how the measurement works
 
+The command behind every worker has three parts, and each one removes a different source of doubt from the result:
+
+| Part | Role | What it rules out |
+|---|---|---|
+| `sha256` | **The work.** A fixed, CPU-only computation that keeps one core's execution unit busy with almost no stalls | Memory, disk and network as hidden bottlenecks |
+| `openssl speed -elapsed` | **The meter.** Counts bytes actually hashed per wall-clock second | The kernel's "100 % busy" reading, which counts time occupied rather than work finished |
+| `taskset -c N` | **The placement.** Nails each worker to one chosen vCPU | The scheduler moving workers around, so the 16- and 32-worker runs on Intel differ by exactly one thing |
+
 ### 4.1 One worker
 
 A single worker is:
@@ -168,7 +176,7 @@ A single worker is:
 taskset -c "$CPU" openssl speed -seconds 60 -elapsed -bytes 16384 sha256
 ```
 
-- `openssl speed` hashes a 16,384-byte buffer in a tight loop for 60 seconds and reports how many bytes per second it processed.
+- `openssl speed` hashes a 16,384-byte buffer in a tight loop for 60 seconds and reports how many bytes per second it processed. Both CPUs advertise the `sha_ni` flag, so OpenSSL picks the same hardware-SHA code path on each machine (the `OPENSSL_ia32cap` line in `system-info.txt` records what it detected). The 16 KiB buffer stays in the core's L1 cache, so each hash is 256 blocks of 64 dependent rounds fed to the SHA unit back to back: the core is busy with arithmetic, not waiting on memory.
 - `-elapsed` measures wall-clock time instead of process CPU time. This matters: with SMT, a thread can be "on CPU" according to the kernel while making slow progress. Wall-clock throughput is what the user experiences.
 - `-bytes 16384` fixes a single, large block size so the measurement is dominated by the hash computation itself rather than per-call overhead.
 - OpenSSL prints throughput as, for example, `1794782.28k`, meaning **thousands of bytes per second** (decimal kilobytes). All figures in this article use that unit; "GB/s" means 10^9 bytes per second.
@@ -555,6 +563,8 @@ The article therefore says: *Intel was already at about 90 % at 16 workers for r
 This is the only transition where the two machines do something structurally different, and it is where the results split:
 
 - **Intel** adds a second worker to each of the same 16 cores. Aggregate throughput rises 28 %, so SMT is doing *something*: the second thread fills gaps the first thread leaves. But SHA-256 with hardware SHA instructions leaves few gaps, so the two threads mostly compete. Per-worker throughput falls 36 % and overall efficiency lands at 57.86 %.
+
+  Concretely, take core 0 of the Intel instance, which is vCPU 0 and vCPU 16. It has one SHA execution unit. With one worker, that worker's dependent rounds keep the unit busy nearly every cycle and it hashes at ~1.8 GB/s. Add a worker on vCPU 16 and the two instruction streams have to take turns on the same unit: each now finishes ~1.03 GB/s. From the kernel's side both vCPUs were scheduled and runnable for the whole 60 seconds, so `top` shows 100 % on both; the kernel cannot see inside the core to know they were alternating. On the AMD instance vCPU 16 is core 16 with its own SHA unit, so the new worker runs at full speed and core 0 is untouched.
 - **AMD** adds 16 workers on 16 previously idle cores. Aggregate throughput rises 99.88 % and per-worker throughput is unchanged.
 
 The 16-to-32 comparison is as close to a controlled experiment on SMT as a cloud guest allows: same instance, same software, same vCPU count change, with the only variable being whether the new vCPUs are new cores or sibling threads.
