@@ -251,7 +251,7 @@ This placement is deliberate. It mirrors what the Linux scheduler prefers to do 
 
 ## 5. Step-by-step procedure (reproduce it yourself)
 
-Every step below shows the command and the output that was actually observed. The two instances were worked on in parallel from two terminals (`[root@intel-vm ~]#` and `[root@amd-vm ~]#`).
+Every step below shows the command and the output that was actually observed. The two instances were worked on in parallel from two SSH sessions side by side in iTerm2 (`[root@intel-vm ~]#` and `[root@amd-vm ~]#`), which is also how the screenshots further down were taken.
 
 ### Step 1. Launch the two instances
 
@@ -263,11 +263,12 @@ aws ec2 run-instances \
     --image-id ami-0d27e0fb3bac4d724 \
     --instance-type c7i.8xlarge \
     --subnet-id <subnet-in-us-east-1c> \
-    --iam-instance-profile Name=<profile-with-AmazonSSMManagedInstanceCore> \
+    --key-name <your-ssh-key-pair> \
+    --security-group-ids <sg-allowing-ssh-from-your-ip> \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=intel-vm}]'
 ```
 
-An IAM instance profile with `AmazonSSMManagedInstanceCore` lets you connect with Session Manager, which is what was used here (no SSH key or open port 22 needed). Nothing else needs to be installed: `openssl`, `taskset` (util-linux), `lscpu`, `awk` and `curl` are all part of the base AL2023 image.
+Connect to each instance over SSH (`ssh ec2-user@<public-ip>`, then `sudo -i`); this run used two SSH sessions open side by side in iTerm2. If you prefer not to open port 22, attach an IAM instance profile with `AmazonSSMManagedInstanceCore` instead and connect with Session Manager; the rest of the procedure is identical. Nothing else needs to be installed: `openssl`, `taskset` (util-linux), `lscpu`, `awk` and `curl` are all part of the base AL2023 image.
 
 ### Step 2. Verify what you got
 
@@ -326,7 +327,7 @@ The full outputs are in [`results/c7i.8xlarge/system-info.txt`](results/c7i.8xla
 
 ### Step 3. Install the benchmark script
 
-Copy [`scripts/cpu-scale.sh`](scripts/cpu-scale.sh) to `/root/cpu-scale.sh` on **both** instances (paste it through the Session Manager terminal with a heredoc, or `aws s3 cp`), then:
+Copy [`scripts/cpu-scale.sh`](scripts/cpu-scale.sh) to `/root/cpu-scale.sh` on **both** instances (`scp`, paste it through the terminal with a heredoc, or `aws s3 cp`), then:
 
 ```bash
 chmod 700 /root/cpu-scale.sh
@@ -339,7 +340,7 @@ Syntax OK
 
 ### Step 4. Start the benchmark on both instances
 
-Run it under `nohup` so a dropped Session Manager connection cannot kill a 30-minute run, and record the PID:
+Run it under `nohup` so a dropped SSH connection cannot kill a 30-minute run, and record the PID:
 
 ```bash
 nohup env DURATION=60 REPEATS=5 /root/cpu-scale.sh \
